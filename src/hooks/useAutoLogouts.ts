@@ -16,19 +16,15 @@ const useAutoLogout = (logoutFn: () => void, timeoutMinutes = 30) => {
   useEffect(() => {
     const events = ["mousemove", "keydown", "click"];
 
-    events.forEach(event =>
-      window.addEventListener(event, resetTimer)
-    );
+    events.forEach((event) => window.addEventListener(event, resetTimer));
 
     resetTimer(); // start timer
 
     return () => {
-      events.forEach(event =>
-        window.removeEventListener(event, resetTimer)
-      );
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
       if (logoutTimer) clearTimeout(logoutTimer);
     };
-  }, []);
+  }, [logoutFn, resetTimer]);
 };
 
 export default useAutoLogout;
