@@ -24,7 +24,7 @@ const useAutoLogout = (logoutFn: () => void, timeoutMinutes = 30) => {
       events.forEach((event) => window.removeEventListener(event, resetTimer));
       if (logoutTimer) clearTimeout(logoutTimer);
     };
-  }, [logoutFn, resetTimer]);
+  }, [logoutTimer]);
 };
 
 export default useAutoLogout;
