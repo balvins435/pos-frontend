@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const useAutoLogout = (logoutFn: () => void, timeoutMinutes = 30) => {
   const navigate = useNavigate();
-  let logoutTimer: NodeJS.Timeout;
+  const logoutTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetTimer = () => {
-    if (logoutTimer) clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(() => {
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+    logoutTimerRef.current = setTimeout(() => {
       logoutFn();
       navigate("/login"); // redirect to login
     }, timeoutMinutes * 60 * 1000);
@@ -22,9 +22,10 @@ const useAutoLogout = (logoutFn: () => void, timeoutMinutes = 30) => {
 
     return () => {
       events.forEach((event) => window.removeEventListener(event, resetTimer));
-      if (logoutTimer) clearTimeout(logoutTimer);
+      if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
     };
-  }, [logoutTimer]);
+    // }, [logoutFn, navigate, timeoutMinutes]);
+  }, [logoutFn, navigate, timeoutMinutes]);
 };
 
 export default useAutoLogout;
