@@ -66,12 +66,11 @@
 
 // export const apiService = new ApiService();
 
-
-
 // api.ts
 
 // With Netlify proxy, all API calls go through /api/*
-const API_BASE_URL = "/api";
+// api.ts
+const API_BASE_URL = "/api"; // ✅ cleaner, works with proxy rules
 
 class ApiService {
   private getAuthHeaders(): HeadersInit {
@@ -82,20 +81,63 @@ class ApiService {
     };
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    // Ensure no double slashes in URL
-    const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
-    const config: RequestInit = {
+  private async refreshAccessToken(): Promise<string | null> {
+    try {
+      const refresh = localStorage.getItem("refreshToken");
+      if (!refresh) return null;
+
+      const response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Refresh failed");
+      }
+
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+        return data.token;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("refreshToken");
+      return null;
+    }
+  }
+
+  async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    let url = `${API_BASE_URL}${endpoint}`;
+    let config: RequestInit = {
       headers: this.getAuthHeaders(),
       ...options,
     };
 
     try {
-      const response = await fetch(url, config);
+      let response = await fetch(url, config);
+
+      // 🔄 If token expired, try refresh
+      if (response.status === 401) {
+        const newToken = await this.refreshAccessToken();
+        if (newToken) {
+          config = {
+            ...options,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${newToken}`,
+            },
+          };
+          response = await fetch(url, config);
+        }
+      }
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       return await response.json();
