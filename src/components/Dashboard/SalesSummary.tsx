@@ -1,6 +1,13 @@
 // SalesSummary.tsx
-import React from 'react';
-import { DollarSign, ShoppingCart, Users, TrendingUp, ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import React from "react";
+import {
+  DollarSign,
+  ShoppingCart,
+  Users,
+  TrendingUp,
+  ArrowUpIcon,
+  ArrowDownIcon,
+} from "lucide-react";
 
 interface MetricCard {
   title: string;
@@ -13,33 +20,33 @@ interface MetricCard {
 const SalesSummary: React.FC = () => {
   const metrics: MetricCard[] = [
     {
-      title: 'Total Revenue',
-      value: '$124,562',
+      title: "Total Revenue",
+      value: "Ksh 124,562",
       change: 12.5,
       icon: <DollarSign className="h-6 w-6" />,
-      color: 'bg-green-500'
+      color: "bg-green-500",
     },
     {
-      title: 'Total Sales',
-      value: '1,234',
+      title: "Total Sales",
+      value: "1,234",
       change: 8.2,
       icon: <ShoppingCart className="h-6 w-6" />,
-      color: 'bg-blue-500'
+      color: "bg-blue-500",
     },
     {
-      title: 'New Customers',
-      value: '186',
+      title: "New Customers",
+      value: "186",
       change: -2.4,
       icon: <Users className="h-6 w-6" />,
-      color: 'bg-purple-500'
+      color: "bg-purple-500",
     },
     {
-      title: 'Growth Rate',
-      value: '15.3%',
+      title: "Growth Rate",
+      value: "15.3%",
       change: 5.1,
       icon: <TrendingUp className="h-6 w-6" />,
-      color: 'bg-orange-500'
-    }
+      color: "bg-orange-500",
+    },
   ];
 
   return (
@@ -59,13 +66,17 @@ const SalesSummary: React.FC = () => {
               </p>
             </div>
             <div className={`${metric.color} p-3 rounded-lg`}>
-              <div className="text-white">
-                {metric.icon}
-              </div>
+              <div className="text-white">{metric.icon}</div>
             </div>
           </div>
           <div className="mt-4 flex items-center">
-            <div className={`flex items-center ${metric.change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <div
+              className={`flex items-center ${
+                metric.change >= 0
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
               {metric.change >= 0 ? (
                 <ArrowUpIcon className="h-4 w-4 mr-1" />
               ) : (

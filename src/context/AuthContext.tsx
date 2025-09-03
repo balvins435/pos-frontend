@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { apiService } from "../services/api"; // ✅ import your ApiService
 
 interface User {
   id: string;
@@ -36,23 +37,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const token = localStorage.getItem("authToken");
         if (token) {
-          const response = await fetch(
-            "http://localhost:8000/api/auth/validate/",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-
-          if (response.ok) {
-            const userData: User = await response.json();
-            setUser(userData);
-          } else {
-            localStorage.removeItem("authToken");
-          }
+          // ✅ use ApiService instead of hardcoded fetch
+          const userData = await apiService.get<User>("/auth/validate/");
+          setUser(userData);
         }
       } catch (error) {
         console.error("Auth check failed:", error);
         localStorage.removeItem("authToken");
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -63,31 +55,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch("http://localhost:8000/api/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        return false; // ❌ login failed
-      }
-
-      const data = await response.json();
-      console.log("Login successful:", data);
+      // ✅ use ApiService instead of hardcoded fetch
+      const data = await apiService.post<{ token: string; user: User }>(
+        "/login/",
+        {
+          email,
+          password,
+        }
+      );
 
       if (data.token) {
         localStorage.setItem("authToken", data.token);
       }
 
       if (data.user) {
-        setUser(data.user); // ✅ set logged-in user
+        setUser(data.user);
       }
 
       return true; // ✅ success
     } catch (error) {
       console.error("Login failed:", error);
-      return false;
+      return false; // ❌ failure
     }
   };
 
