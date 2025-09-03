@@ -1,4 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  # Proxy all API requests to Render backend
+  from = "/api/*"
+  to = "https://pos-backend-0fji.onrender.com/api/:splat"
   status = 200
+  force = true
