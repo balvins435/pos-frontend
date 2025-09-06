@@ -112,7 +112,7 @@ class ApiService {
   }
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    let url = `${API_BASE_URL}${endpoint}`;
+    const url = `${API_BASE_URL}${endpoint}`;
     let config: RequestInit = {
       headers: this.getAuthHeaders(),
       ...options,
@@ -136,8 +136,20 @@ class ApiService {
         }
       }
 
+      // ❌ Handle non-OK responses with detailed logging
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorData: any = null;
+        try {
+          errorData = await response.json();
+        } catch (_) {
+          errorData = await response.text(); // fallback if not JSON
+        }
+        console.error("API error response:", errorData);
+        throw new Error(
+          `HTTP error! status: ${response.status} - ${JSON.stringify(
+            errorData
+          )}`
+        );
       }
 
       return await response.json();
