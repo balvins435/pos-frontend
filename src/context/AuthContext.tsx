@@ -16,7 +16,7 @@ interface AuthContextType {
     email: string,
     password: string,
     confirmPassword: string
-  ) => Promise<boolean>;
+  ) => Promise<{ success: boolean; error?: any }>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string,
     password: string,
     confirmPassword: string
-  ): Promise<boolean> => {
+  ): Promise<{ success: boolean; error?: any }> => {
     try {
       const data = await apiService.post<{
         token: string;
@@ -117,10 +117,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (data.refresh) localStorage.setItem("refreshToken", data.refresh);
       if (data.user) setUser(data.user);
 
-      return true;
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error("Registration failed:", error);
-      return false;
+      return { success: false, error: error.message || error };
     }
   };
 

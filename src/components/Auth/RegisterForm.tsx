@@ -35,12 +35,19 @@ const RegisterForm: React.FC = () => {
         username,
         email,
         password,
-        password2: confirmPassword,
+        confirm_password: confirmPassword, // ✅ use correct field name
       });
+
       alert("Registration successful! Please log in.");
       navigate("/login");
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+    } catch (err: any) {
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        const firstError = Object.values(errorData)[0];
+        setError(Array.isArray(firstError) ? firstError[0] : firstError);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
