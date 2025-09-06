@@ -103,3 +103,4 @@ export const useInventory = () => {
     getTotalValue,
   };
 };
+export default useInventory;
