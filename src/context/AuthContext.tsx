@@ -100,7 +100,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         token: string;
         refresh: string;
         user: User;
-      }>("/register/", { username, email, password, confirmPassword });
+      }>("/register/", {
+        username,
+        email,
+        password,
+        confirm_password: confirmPassword,
+      });
 
       if (data.token) localStorage.setItem("authToken", data.token);
       if (data.refresh) localStorage.setItem("refreshToken", data.refresh);
