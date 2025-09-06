@@ -88,6 +88,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     checkAuth();
   }, []);
 
+  // Register
+  const register = async (
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ): Promise<boolean> => {
+    try {
+      const data = await apiService.post<{
+        token: string;
+        refresh: string;
+        user: User;
+      }>("/register/", { username, email, password, confirmPassword });
+
+      if (data.token) localStorage.setItem("authToken", data.token);
+      if (data.refresh) localStorage.setItem("refreshToken", data.refresh);
+      if (data.user) setUser(data.user);
+
+      return true;
+    } catch (error) {
+      console.error("Registration failed:", error);
+      return false;
+    }
+  };
+
   // ✅ Login
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
