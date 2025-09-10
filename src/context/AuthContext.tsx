@@ -43,10 +43,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("authToken");
       if (token) {
         try {
-          // Optional: call an endpoint to fetch current user
-          const data = await apiService.get<User>("/auth/me/");
-          setUser(data);
-        } catch {
+          const currentUser = await apiService.getCurrentUser();
+          if (currentUser) {
+            setUser(currentUser);
+          } else {
+            // If no user endpoint works, clear tokens
+            apiService.logout();
+            setUser(null);
+          }
+        } catch (error) {
+          console.error("Failed to get current user:", error);
           apiService.logout();
           setUser(null);
         }
@@ -58,11 +64,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
-      const data = await apiService.login(email, password); // stores tokens in localStorage
-      // fetch user info
-      const currentUser = await apiService.get<User>("/auth/me/");
-      setUser(currentUser);
-      return true;
+      const data = await apiService.login(email, password);
+      
+      // The login response might already include user data
+      if (data.user) {
+        setUser(data.user);
+        return true;
+      }
+      
+      // If not, try to fetch user info
+      try {
+        const currentUser = await apiService.getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          return true;
+        }
+      } catch (userError) {
+        console.warn("Could not fetch user info after login:", userError);
+        // If we can't get user info but login was successful,
+        // create a minimal user object from login data
+        if (data.access) {
+          setUser({
+            id: "unknown",
+            email: email,
+            name: "User",
+            role: "cashier"
+          });
+          return true;
+        }
+      }
+      
+      return false;
     } catch (err) {
       console.error("Login failed:", err);
       return false;
@@ -76,21 +108,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     role: "admin" | "cashier" = "cashier"
   ) => {
     try {
-      const data = await apiService.post<{
-        access: string;
-        refresh: string;
-        user: User;
-      }>("/auth/register/", {
-        email,
-        password,
-        name,
-        role,
-      });
-
-      localStorage.setItem("authToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
-      setUser(data.user);
-      return true;
+      const data = await apiService.register(email, password, name, role);
+      
+      // Registration response should include user data
+      if (data.user) {
+        setUser(data.user);
+        return true;
+      }
+      
+      // If registration was successful but no user data, create user object
+      if (data.access) {
+        setUser({
+          id: data.user?.id || "unknown",
+          email: email,
+          name: name,
+          role: role
+        });
+        return true;
+      }
+      
+      return false;
     } catch (err) {
       console.error("Registration failed:", err);
       return false;

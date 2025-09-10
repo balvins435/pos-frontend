@@ -54,16 +54,37 @@ class ApiService {
     }
 
     if (!response.ok) {
-      let errorData: any;
+      let errorMessage: string;
+      const contentType = response.headers.get("content-type");
+      
       try {
-        errorData = await response.json();
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = JSON.stringify(errorData);
+        } else {
+          const errorText = await response.text();
+          errorMessage = errorText || response.statusText;
+        }
       } catch {
-        errorData = await response.text();
+        errorMessage = response.statusText || "Unknown error";
       }
-      throw new Error(`HTTP ${response.status} - ${JSON.stringify(errorData)}`);
+      
+      throw new Error(`HTTP ${response.status} - ${errorMessage}`);
     }
 
-    return response.json();
+    // Check if response has content before trying to parse JSON
+    const contentLength = response.headers.get("content-length");
+    const contentType = response.headers.get("content-type");
+    
+    if (contentLength === "0" || response.status === 204) {
+      return {} as T;
+    }
+    
+    if (contentType && contentType.includes("application/json")) {
+      return response.json();
+    }
+    
+    return response.text() as unknown as T;
   }
 
   get<T>(endpoint: string) {
@@ -91,7 +112,7 @@ class ApiService {
     const data = await this.post<{ access: string; refresh: string; user: any }>("/auth/login/", { email, password });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
-    return data.user;
+    return data;
   }
 
   // REGISTER
@@ -99,12 +120,14 @@ class ApiService {
     const data = await this.post<{ access: string; refresh: string; user: any }>("/auth/register/", { email, password, name, role });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
-    return data.user;
+    return data;
   }
 
-  // GET CURRENT USER
+  // Since there's no /auth/me/ endpoint, we'll rely on the user data from login/register responses
   async getCurrentUser() {
-    return this.get<any>("/auth/me/");
+    // No backend endpoint available for getting current user
+    // User data should be obtained from login/register responses
+    return null;
   }
 
   logout() {
