@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import { Button } from "../Shared/Button";
 import { useNavigate } from "react-router-dom";
- //  import router
+
+//  import router
 
 interface LoginFormProps {
   onForgotPassword: () => void;

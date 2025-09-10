@@ -2,7 +2,8 @@
 import React from "react";
 import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "../Shared/Button";
-import { useSales } from "../../hooks/useAuth";
+import { useSales } from "../../hooks/useSales";
+import { useCart } from "../../hooks/useCart";
 
 const Cart: React.FC = () => {
   const {
@@ -12,7 +13,7 @@ const Cart: React.FC = () => {
     getCartTotal,
     getCartItemCount,
     clearCart,
-  } = useSales();
+  } = useCart();
 
   if (cart.length === 0) {
     return (
