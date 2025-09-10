@@ -25,7 +25,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
@@ -37,13 +37,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Attempt to load user on mount
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        try {
+          // Optional: call an endpoint to fetch current user
+          const data = await apiService.get<User>("/auth/me/");
+          setUser(data);
+        } catch {
+          apiService.logout();
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
+    initAuth();
+  }, []);
+
   const login = async (email: string, password: string) => {
     try {
-      const data = await apiService.post<{ token: string; user: User }>("/login/", { email, password });
-      localStorage.setItem("authToken", data.token);
-      setUser(data.user);
+      const data = await apiService.login(email, password); // stores tokens in localStorage
+      // fetch user info
+      const currentUser = await apiService.get<User>("/auth/me/");
+      setUser(currentUser);
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Login failed:", err);
       return false;
     }
   };
@@ -55,27 +76,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     role: "admin" | "cashier" = "cashier"
   ) => {
     try {
-      const data = await apiService.post<{ token: string; user: User }>("/register/", { email, password, name, role });
-      localStorage.setItem("authToken", data.token);
+      const data = await apiService.post<{
+        access: string;
+        refresh: string;
+        user: User;
+      }>("/auth/register/", {
+        email,
+        password,
+        name,
+        role,
+      });
+
+      localStorage.setItem("authToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
       setUser(data.user);
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Registration failed:", err);
       return false;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
+    apiService.logout();
     setUser(null);
   };
 
-  useEffect(() => {
-    // Optional: validate token on mount
-    setLoading(false);
-  }, []);
-
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        register,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
