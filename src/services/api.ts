@@ -15,7 +15,7 @@ class ApiService {
       const refresh = localStorage.getItem("refreshToken");
       if (!refresh) return null;
 
-      const response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+      const response = await fetch(`${API_BASE_URL}/refresh/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh }),
@@ -36,7 +36,10 @@ class ApiService {
     }
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     let config: RequestInit = {
       headers: this.getAuthHeaders(),
@@ -56,7 +59,7 @@ class ApiService {
     if (!response.ok) {
       let errorMessage: string;
       const contentType = response.headers.get("content-type");
-      
+
       try {
         if (contentType && contentType.includes("application/json")) {
           const errorData = await response.json();
@@ -68,22 +71,22 @@ class ApiService {
       } catch {
         errorMessage = response.statusText || "Unknown error";
       }
-      
+
       throw new Error(`HTTP ${response.status} - ${errorMessage}`);
     }
 
     // Check if response has content before trying to parse JSON
     const contentLength = response.headers.get("content-length");
     const contentType = response.headers.get("content-type");
-    
+
     if (contentLength === "0" || response.status === 204) {
       return {} as T;
     }
-    
+
     if (contentType && contentType.includes("application/json")) {
       return response.json();
     }
-    
+
     return response.text() as unknown as T;
   }
 
@@ -92,15 +95,24 @@ class ApiService {
   }
 
   post<T>(endpoint: string, data: any) {
-    return this.request<T>(endpoint, { method: "POST", body: JSON.stringify(data) });
+    return this.request<T>(endpoint, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   }
 
   put<T>(endpoint: string, data: any) {
-    return this.request<T>(endpoint, { method: "PUT", body: JSON.stringify(data) });
+    return this.request<T>(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
   }
 
   patch<T>(endpoint: string, data: any) {
-    return this.request<T>(endpoint, { method: "PATCH", body: JSON.stringify(data) });
+    return this.request<T>(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   }
 
   delete<T>(endpoint: string) {
@@ -109,15 +121,28 @@ class ApiService {
 
   // LOGIN
   async login(email: string, password: string) {
-    const data = await this.post<{ access: string; refresh: string; user: any }>("/auth/login/", { email, password });
+    const data = await this.post<{
+      access: string;
+      refresh: string;
+      user: any;
+    }>("/login/", { email, password });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
     return data;
   }
 
   // REGISTER
-  async register(email: string, password: string, name: string, role: "admin" | "cashier" = "cashier") {
-    const data = await this.post<{ access: string; refresh: string; user: any }>("/auth/register/", { email, password, name, role });
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    role: "admin" | "cashier" = "cashier"
+  ) {
+    const data = await this.post<{
+      access: string;
+      refresh: string;
+      user: any;
+    }>("/register/", { email, password, name, role });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
     return data;
