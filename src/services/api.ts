@@ -121,10 +121,15 @@ class ApiService {
 
   // LOGIN
   async login(email: string, password: string) {
+    console.log("Attempting login with:", { email, password: "***" }); // Debug log
     const data = await this.post<{
+      id: number;
+      username: string;
+      email: string;
+      role: string;
       access: string;
       refresh: string;
-      user: any;
+      message: string;
     }>("/login/", { email, password });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
@@ -138,11 +143,16 @@ class ApiService {
     name: string,
     role: "admin" | "cashier" = "cashier"
   ) {
+    // Note: your backend might expect 'username' instead of 'name'
     const data = await this.post<{
+      id: number;
+      username: string;
+      email: string;
+      role: string;
       access: string;
       refresh: string;
-      user: any;
-    }>("/register/", { email, password, name, role });
+      message: string;
+    }>("/register/", { email, password, username: name, role });
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
     return data;
