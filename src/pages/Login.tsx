@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from "../context/AuthContext";
 import LoginForm from '../components/Auth/LoginForm';
 import ForgotPassword from '../components/Auth/ForgotPassword';
 

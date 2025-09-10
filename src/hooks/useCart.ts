@@ -65,5 +65,16 @@ export const useCart = () => {
     clearCart,
     getCartTotal,
     getCartItemCount,
-  };
-};
+    createSale: async (saleData: any) => {
+    // Implement your sale creation logic here
+    // For example, make an API call to your backend
+    const response = await fetch('/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(saleData),
+    });
+    if (!response.ok) throw new Error('Failed to create sale');
+    return response.json();
+  },
+}; // close return object
+}; // close useCart function

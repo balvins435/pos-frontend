@@ -2,7 +2,6 @@
 import React from "react";
 import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "../Shared/Button";
-import { useSales } from "../../hooks/useSales";
 import { useCart } from "../../hooks/useCart";
 
 const Cart: React.FC = () => {

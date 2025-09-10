@@ -4,7 +4,7 @@ import { Button } from '../components/Shared/Button';
 import ProductCard from '../components/Sales/ProductionCard';
 import Cart from '../components/Sales/Cart';
 import CheckoutPanel from '../components/Sales/CheckoutPanel';
-import { useSales } from '../hooks/useAuth';
+import { useCart } from '../hooks/useCart';
 import { useInventory } from '../hooks/useInventory';
 
 const Sales: React.FC = () => {
@@ -12,7 +12,7 @@ const Sales: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckout, setShowCheckout] = useState(false);
   
-  const { cart, addToCart, getCartTotal, getCartItemCount } = useSales();
+  const { cart, addToCart, getCartTotal, getCartItemCount } = useCart();
   const { items: products, loading } = useInventory();
 
   const categories = ['all', 'electronics', 'clothing', 'home-garden', 'sports', 'books'];
@@ -33,7 +33,8 @@ const Sales: React.FC = () => {
       productId: product.id,
       name: product.name,
       price: product.price,
-      stock: product.quantity
+      stock: product.quantity,
+      quantity: 0
     });
   };
 

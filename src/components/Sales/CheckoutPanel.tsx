@@ -4,7 +4,7 @@ import { CreditCard, Banknote, Smartphone, Building } from "lucide-react";
 import { Button } from "../Shared/Button";
 import { Modal } from "../Shared/Modal";
 
-import { useSales } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
 interface CheckoutPanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,7 +19,7 @@ const CheckoutPanel: React.FC<CheckoutPanelProps> = ({ isOpen, onClose }) => {
   const [discount, setDiscount] = useState(0);
   const [processing, setProcessing] = useState(false);
 
-  const { cart, getCartTotal, createSale, clearCart } = useSales();
+  const { cart, getCartTotal, createSale, clearCart } = useCart();
 
   const subtotal = getCartTotal();
   const tax = subtotal * 0.08; // 8% tax
