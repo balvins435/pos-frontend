@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bell, Search, User, Settings, LogOut } from 'lucide-react';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../Shared/ThemeToggle';
 
 const Navbar: React.FC = () => {
