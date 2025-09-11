@@ -65,13 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     try {
       const data = await apiService.login(email, password);
-      
-      // The login response might already include user data
-      if (data.user) {
-        setUser(data.user);
+
+      // The login response includes user data directly
+      if (data.id && data.username) {
+        setUser({
+          id: data.id.toString(),
+          email: data.email,
+          name: data.username,
+          role: data.role as "admin" | "cashier",
+        });
         return true;
       }
-      
+
       // If not, try to fetch user info
       try {
         const currentUser = await apiService.getCurrentUser();
@@ -88,12 +93,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             id: "unknown",
             email: email,
             name: "User",
-            role: "cashier"
+            role: "cashier",
           });
           return true;
         }
       }
-      
+
       return false;
     } catch (err) {
       console.error("Login failed:", err);
@@ -109,24 +114,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   ) => {
     try {
       const data = await apiService.register(email, password, name, role);
-      
-      // Registration response should include user data
-      if (data.user) {
-        setUser(data.user);
-        return true;
-      }
-      
-      // If registration was successful but no user data, create user object
-      if (data.access) {
+
+      // Registration response includes user data directly
+      if (data.id && data.email) {
         setUser({
-          id: data.user?.id || "unknown",
-          email: email,
-          name: name,
-          role: role
+          id: data.id.toString(),
+          email: data.email,
+          name: data.username,
+          role: data.role as "admin" | "cashier",
         });
         return true;
       }
-      
+
+      // If registration was successful but no user data, create user object
+      if (data.access) {
+        setUser({
+          id: data.id?.toString() || "unknown",
+          email: email,
+          name: name,
+          role: role,
+        });
+        return true;
+      }
+
       return false;
     } catch (err) {
       console.error("Registration failed:", err);
