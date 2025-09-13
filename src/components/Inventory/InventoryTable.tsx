@@ -4,6 +4,7 @@ import { Edit, Trash2, Package } from 'lucide-react';
 import { Button } from '../Shared/Button';
 import { InventoryItem } from '../../types/inventory';
 
+
 interface InventoryTableProps {
   items: InventoryItem[];
   onEditItem: (item: InventoryItem) => void;
