@@ -26,6 +26,7 @@ const Inventory: React.FC = () => {
   } = useInventory();
 
   const categories = ['all', ...Array.from(new Set(items.map(item => item.category)))];
+  const availableCategories = Array.from(new Set(items.map(item => item.category))).filter(cat => typeof cat === 'string') as string[];
   const statuses = ['all', 'in-stock', 'low-stock', 'out-of-stock'];
 
   const filteredItems = items.filter(item => {
@@ -228,6 +229,7 @@ const Inventory: React.FC = () => {
           }}
           onSave={handleSaveItem}
           item={editingItem}
+          availableCategories={availableCategories}
         />
       )}
 
