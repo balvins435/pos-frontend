@@ -1,5 +1,7 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { X, Package, AlertCircle } from 'lucide-react';
+import { InventoryItem } from '../../types/inventory';
+ 
 
 // Type definitions
 interface Category {
@@ -33,6 +35,11 @@ interface FormErrors {
 interface ApiResponse {
   [key: string]: any;
 }
+
+// Type guard function
+const isInventoryItem = (item: any): item is InventoryItem => {
+  return item && typeof item.id === 'string';
+};
 
 // Service aligned with your Django models
 const inventoryService = {
@@ -155,11 +162,12 @@ const Button: React.FC<ButtonProps> = ({
 interface ItemModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
-  item?: Item | null;
+  onSuccess?: () => void;
+  onSave?: (itemData: Partial<InventoryItem>) => Promise<void>;
+  item?: InventoryItem | Item | null;
 }
 
-const ItemModal: React.FC<ItemModalProps> = ({ isOpen, onClose, onSuccess, item = null }) => {
+const ItemModal: React.FC<ItemModalProps> = ({ isOpen, onClose, onSuccess, onSave, item = null }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -186,10 +194,13 @@ const ItemModal: React.FC<ItemModalProps> = ({ isOpen, onClose, onSuccess, item 
     if (isOpen) {
       if (item) {
         // Editing existing item
+        const categoryValue = isInventoryItem(item) ? item.category : 
+                             (typeof item.category === 'number' ? item.category : item.category?.id || '');
+        
         setFormData({
           name: item.name || '',
           sku: item.sku || '',
-          category: (typeof item.category === 'number' ? item.category : item.category?.id || '').toString(),
+          category: categoryValue.toString(),
           quantity: item.quantity?.toString() || '0',
           price: item.price?.toString() || '',
           low_stock_threshold: item.low_stock_threshold?.toString() || '5'
@@ -283,7 +294,7 @@ const ItemModal: React.FC<ItemModalProps> = ({ isOpen, onClose, onSuccess, item 
     try {
       if (onSave) {
         // When called from Inventory page, use onSave callback
-        const submitData: Partial<isInventoryItem> = {
+        const submitData: Partial<InventoryItem> = {
           name: formData.name.trim(),
           sku: formData.sku.trim(),
           category: formData.category, // category is string in InventoryItem
