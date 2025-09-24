@@ -4,9 +4,9 @@ import { Plus, Package } from "lucide-react";
 import { Button } from "../Shared/Button";
 
 interface Product {
-  id: string;
+  id: number;
   name: string;
-  price: number;
+  price: string | number;
   image: string;
   stock: number;
   category: string;
@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
         <div className="flex items-center justify-between mb-3">
           <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-            ${product.price.toFixed(2)}
+            Ksh {Number(product.price).toFixed(2)}
           </span>
           <span
             className={`text-xs px-2 py-1 rounded-full ${

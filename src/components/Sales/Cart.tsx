@@ -64,7 +64,7 @@ const Cart: React.FC = () => {
                 {item.name}
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                ${item.price.toFixed(2)} each
+                Ksh {item.price.toFixed(2)} each
               </p>
             </div>
 
@@ -115,7 +115,7 @@ const Cart: React.FC = () => {
             Total
           </span>
           <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            ${getCartTotal().toFixed(2)}
+            Ksh {getCartTotal().toFixed(2)}
           </span>
         </div>
       </div>

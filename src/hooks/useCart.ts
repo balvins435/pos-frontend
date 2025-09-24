@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export interface CartItem {
-  productId: string;
+  productId: number;
   name: string;
   price: number;
   quantity: number;
@@ -32,12 +32,13 @@ export const useCart = () => {
   };
 
   // Remove item completely
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.productId !== productId));
-  };
+  const removeFromCart = (productId: number) => {
+  setCart((prev) => prev.filter((item) => item.productId !== productId));
+};
+
 
   // Update quantity
-  const updateCartItemQuantity = (productId: string, quantity: number) => {
+  const updateCartItemQuantity = (productId: number, quantity: number) => {
     if (quantity <= 0) return removeFromCart(productId);
     setCart((prev) =>
       prev.map((item) =>

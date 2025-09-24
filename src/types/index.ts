@@ -1,27 +1,22 @@
 // src/types/index.ts
+// sales.ts
 export interface SaleItem {
-  id: string;
-  productId: string;
-  name: string;
+  item: number;              // FK ID of Item
   quantity: number;
-  price: number;
-  total: number;
+  unit_price: number;
 }
 
 export interface Sale {
-  id: string;
-  customerId: string;
-  customerName: string;
+  id: number;
+  user: number;              // FK ID of User
+  customer: number | null;   // FK ID of Customer (nullable)
+  date: string;              // auto_now_add DateTime
+  total: number;             // computed in backend
+  payment_method: string;    // e.g., "cash"
   items: SaleItem[];
-  subtotal: number;
-  tax: number;
-  discount: number;
-  total: number;
-  paymentMethod: "cash" | "card" | "bank-transfer" | "mobile-money";
-  status: "pending" | "completed" | "cancelled" | "refunded";
-  createdAt: string;
-  updatedAt: string;
 }
+
+// inventory.ts
 
 
 export interface Category {

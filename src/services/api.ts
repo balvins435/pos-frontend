@@ -1,5 +1,7 @@
 // src/services/api.ts
-const API_BASE_URL = "https://pos-backend-0fji.onrender.com/api";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
 class ApiService {
   private getAuthHeaders(): HeadersInit {
@@ -75,7 +77,6 @@ class ApiService {
       throw new Error(`HTTP ${response.status} - ${errorMessage}`);
     }
 
-    // Check if response has content before trying to parse JSON
     const contentLength = response.headers.get("content-length");
     const contentType = response.headers.get("content-type");
 
@@ -119,9 +120,7 @@ class ApiService {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
 
-  // LOGIN
   async login(email: string, password: string) {
-    console.log("Attempting login with:", { email, password: "***" }); // Debug log
     const data = await this.post<{
       id: number;
       username: string;
@@ -136,14 +135,12 @@ class ApiService {
     return data;
   }
 
-  // REGISTER
   async register(
     email: string,
     password: string,
     name: string,
     role: "admin" | "cashier" = "cashier"
   ) {
-    // Note: your backend might expect 'username' instead of 'name'
     const data = await this.post<{
       id: number;
       username: string;
@@ -158,10 +155,7 @@ class ApiService {
     return data;
   }
 
-  // Since there's no /auth/me/ endpoint, we'll rely on the user data from login/register responses
   async getCurrentUser() {
-    // No backend endpoint available for getting current user
-    // User data should be obtained from login/register responses
     return null;
   }
 

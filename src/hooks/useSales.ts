@@ -2,25 +2,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export interface SaleItem {
-  productId: string;
-  name: string;
-  price: number;
+  item: number;              // FK ID of Item
   quantity: number;
-  total: number;
+  unit_price: number;
 }
 
 export interface Sale {
-  id: string;
-  customerId: string;
-  customerName: string;
+  id: number;
+  user: number;              // FK ID of User
+  customer: number | null;   // FK ID of Customer (nullable)
+  date: string;              // auto_now_add DateTime
+  total: number;             // computed in backend
+  payment_method: string;    // e.g., "cash"
   items: SaleItem[];
-  subtotal: number;
-  tax: number;
-  discount: number;
-  total: number;
-  paymentMethod: "cash" | "card" | "bank-transfer" | "mobile-money";
-  status: "pending" | "completed" | "cancelled";
-  createdAt: string;
 }
 
 export const useSales = () => {
@@ -31,7 +25,7 @@ export const useSales = () => {
   const fetchSales = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<Sale[]>("/api/sales/");
+      const res = await axios.get<Sale[]>("/sales/");
       setSales(res.data);
     } catch (err: any) {
       setError(err.message || "Error fetching sales");

@@ -1,9 +1,8 @@
 // InventoryTable.tsx
-import React from 'react';
-import { Edit, Trash2, Package } from 'lucide-react';
-import { Button } from '../Shared/Button';
-import { InventoryItem } from '../../types/inventory';
-
+import React from "react";
+import { Edit, Trash2, Package } from "lucide-react";
+import { Button } from "../Shared/Button";
+import { InventoryItem } from "../../types/inventory";
 
 interface InventoryTableProps {
   items: InventoryItem[];
@@ -14,21 +13,38 @@ interface InventoryTableProps {
 const InventoryTable: React.FC<InventoryTableProps> = ({
   items,
   onEditItem,
-  onDeleteItem
+  onDeleteItem,
 }) => {
-  const getStatusBadge = (status: InventoryItem['status']) => {
-    const statusConfig = {
-      'in-stock': 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300',
-      'low-stock': 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300',
-      'out-of-stock': 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300'
-    };
-
+  const getStatusBadge = (status?: InventoryItem['status']) => {
+  if (!status) {
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusConfig[status]}`}>
-        {status.replace('-', ' ').toUpperCase()}
+      <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+        UNKNOWN
       </span>
     );
+  }
+
+  const statusConfig: Record<string, string> = {
+    "in-stock": "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300",
+    "low-stock": "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300",
+    "out-of-stock": "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300"
   };
+
+  const label = status.includes("-")
+    ? status.replace("-", " ").toUpperCase()
+    : status.toUpperCase();
+
+  return (
+    <span
+      className={`px-2 py-1 text-xs font-medium rounded-full ${
+        statusConfig[status] || "bg-gray-200 text-gray-600"
+      }`}
+    >
+      {label}
+    </span>
+  );
+};
+
 
   if (items.length === 0) {
     return (
@@ -78,7 +94,10 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {items.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <tr
+                key={String(item.id)}
+                className="hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center mr-4">
@@ -98,7 +117,7 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
                   {item.sku}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                  {String(item.category)}
+                  {typeof item.category === "string" ? item.category : item.category?.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 dark:text-white">
@@ -110,10 +129,10 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 dark:text-white">
-                    ${item.price.toFixed(2)}
+                    {item.price ? Number(item.price).toFixed(2) : "0.00"}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Cost: ${item.cost.toFixed(2)}
+                    Cost: ${item.cost ? Number(item.cost).toFixed(2) : "0.00"}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
