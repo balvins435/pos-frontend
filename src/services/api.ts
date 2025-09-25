@@ -1,7 +1,11 @@
 // src/services/api.ts
 
+// Decide API base URL depending on environment
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || // ✅ Explicitly set in Netlify if needed
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:8000/api" // ✅ Local dev
+    : "/api"); // ✅ Production (Netlify proxy to Render)
 
 class ApiService {
   private getAuthHeaders(): HeadersInit {
@@ -130,6 +134,7 @@ class ApiService {
       refresh: string;
       message: string;
     }>("/login/", { email, password });
+
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
     return data;
@@ -150,13 +155,14 @@ class ApiService {
       refresh: string;
       message: string;
     }>("/register/", { email, password, username: name, role });
+
     localStorage.setItem("authToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
     return data;
   }
 
   async getCurrentUser() {
-    return null;
+    return null; // can be implemented later
   }
 
   logout() {

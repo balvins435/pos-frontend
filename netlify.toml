@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "build"
+  publish = "out"
 
 [[redirects]]
   # Proxy all API requests to Render backend
@@ -8,3 +8,9 @@
   to = "https://pos-backend-0fji.onrender.com/api/:splat"
   status = 200
   force = true
+
+# Let Next.js handle all other routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

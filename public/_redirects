@@ -1,5 +1,0 @@
-# Proxy API requests to backend
-/api/*  https://pos-backend-0fji.onrender.com/api/:splat  200
-
-# Let React handle all other routes
-/*   /index.html   200
