@@ -5,7 +5,7 @@ import { InventoryItem, CreateItemDTO } from "../types/inventory";
 
 class InventoryService {
   async getAllItems(): Promise<InventoryItem[]> {
-    return apiService.get<InventoryItem[]>("/items");
+    return apiService.get<InventoryItem[]>("/items/");
   }
 
   async getItem(id: string): Promise<InventoryItem> {
@@ -13,7 +13,7 @@ class InventoryService {
   }
 
   async createItem(item: CreateItemDTO): Promise<InventoryItem> {
-    return apiService.post<InventoryItem>("/items", item);
+    return apiService.post<InventoryItem>("/items/", item);
   }
 
   async updateItem(
@@ -44,11 +44,11 @@ class InventoryService {
   }
 
   async getCategories(): Promise<string[]> {
-    return apiService.get<string[]>("/categories");
+    return apiService.get<string[]>("/categories/");
   }
 
   async getSuppliers(): Promise<string[]> {
-    return apiService.get<string[]>("/suppliers");
+    return apiService.get<string[]>("/suppliers/");
   }
 }
 
