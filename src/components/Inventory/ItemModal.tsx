@@ -469,14 +469,12 @@ const ItemModal: React.FC<ItemModalProps> = ({
             >
               <option value="">Select a category</option>
               {categories.map((category) => (
-                <option
-                  key={category.id}
-                  value={onSave ? category.name : category.id}
-                >
+                <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
             </select>
+
             {errors.category && (
               <p className="text-red-500 text-xs mt-1">{errors.category}</p>
             )}
