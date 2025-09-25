@@ -9,8 +9,8 @@
   status = 200
   force = true
 
-# Let Next.js handle all other routes
 [[redirects]]
+  # Let Next.js handle all other routes
   from = "/*"
   to = "/index.html"
   status = 200
