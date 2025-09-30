@@ -9,7 +9,7 @@ class InventoryService {
   }
 
   async getItem(id: string): Promise<InventoryItem> {
-    return apiService.get<InventoryItem>(`/items/${id}`);
+    return apiService.get<InventoryItem>(`/items/${id}/`);
   }
 
   async createItem(item: CreateItemDTO): Promise<InventoryItem> {
@@ -20,21 +20,21 @@ class InventoryService {
     id: string,
     updates: Partial<InventoryItem>
   ): Promise<InventoryItem> {
-    return apiService.patch<InventoryItem>(`/items/${id}`, updates);
+    return apiService.patch<InventoryItem>(`/items/${id}/`, updates);
   }
 
   async deleteItem(id: string): Promise<void> {
-    return apiService.delete<void>(`/items/${id}`);
+    return apiService.delete<void>(`/items/${id}/`);
   }
 
   async updateStock(id: string, quantity: number): Promise<InventoryItem> {
-    return apiService.patch<InventoryItem>(`/items/${id}/stock`, {
+    return apiService.patch<InventoryItem>(`/items/${id}/stock/`, {
       quantity,
     });
   }
 
   async getLowStockItems(): Promise<InventoryItem[]> {
-    return apiService.get<InventoryItem[]>("/items/low-stock");
+    return apiService.get<InventoryItem[]>("/items/low-stock/");
   }
 
   async searchItems(query: string): Promise<InventoryItem[]> {
