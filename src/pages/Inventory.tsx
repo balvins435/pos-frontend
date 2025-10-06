@@ -54,7 +54,7 @@ const Inventory: React.FC = () => {
   const handleSaveItem = async (itemData: Partial<InventoryItem>) => {
     try {
       if (editingItem) {
-        await updateItem(editingItem.id, itemData);
+        await updateItem(editingItem.id.toString(), itemData);
       } else {
         await addItem(itemData as Omit<InventoryItem, 'id' | 'lastUpdated' | 'status'>);
       }

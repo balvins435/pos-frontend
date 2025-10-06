@@ -9,7 +9,6 @@ const Dashboard: React.FC = () => {
   const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    // You can also redirect after logout if needed:
     // window.location.href = "/login";
   };
 
@@ -17,12 +16,13 @@ const Dashboard: React.FC = () => {
   useAutoLogout(logout, 30);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
           Dashboard
         </h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           {new Date().toLocaleDateString("en-US", {
             weekday: "long",
             year: "numeric",
@@ -32,18 +32,20 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Sales Summary Cards */}
-      <SalesSummary />
+      {/* Sales Summary - stack on mobile, grid on larger screens */}
+      <div className="w-full">
+        <SalesSummary />
+      </div>
 
-      {/* Main Content Grid */}
+      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Charts - Takes 2 columns */}
-        <div className="lg:col-span-2">
+        {/* Charts */}
+        <div className="lg:col-span-2 order-2 lg:order-1">
           <Charts />
         </div>
 
-        {/* Inventory Alerts - Takes 1 column */}
-        <div className="lg:col-span-1">
+        {/* Inventory Alerts */}
+        <div className="lg:col-span-1 order-1 lg:order-2">
           <InventoryAlerts />
         </div>
       </div>

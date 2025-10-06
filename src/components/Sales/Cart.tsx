@@ -1,6 +1,6 @@
 // Cart.tsx
 import React from "react";
-import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
 import { Button } from "../Shared/Button";
 import { useCart } from "../../hooks/useCart";
 
@@ -13,6 +13,12 @@ const Cart: React.FC = () => {
     getCartItemCount,
     clearCart,
   } = useCart();
+
+  const handleCheckout = () => {
+    // 👉 navigate to checkout page
+    // e.g., using react-router or next/router depending on your setup
+    console.log("Proceeding to checkout with items:", cart);
+  };
 
   if (cart.length === 0) {
     return (
@@ -76,6 +82,7 @@ const Cart: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 p-0"
+                disabled={item.quantity <= 1}
               >
                 <Minus className="h-3 w-3" />
               </Button>
@@ -118,6 +125,14 @@ const Cart: React.FC = () => {
             Ksh {getCartTotal().toFixed(2)}
           </span>
         </div>
+
+        <Button
+          onClick={handleCheckout}
+          className="w-full flex items-center justify-center"
+        >
+          Proceed to Checkout
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
       </div>
     </div>
   );

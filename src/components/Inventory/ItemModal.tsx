@@ -175,8 +175,10 @@ const Button: React.FC<ButtonProps> = ({
 interface ItemModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSave: (itemData: Partial<InventoryItem>) => Promise<void>;
   onSuccess?: () => void;
-  item?: Item | null;
+  item: InventoryItem | null;
+  availableCategories: string[];
 }
 
 const ItemModal: React.FC<ItemModalProps> = ({
@@ -257,7 +259,7 @@ const ItemModal: React.FC<ItemModalProps> = ({
       };
 
       if (item) {
-        await inventoryService.updateItem(item.id, submitData);
+        await inventoryService.updateItem(Number(item.id), submitData);
       } else {
         await inventoryService.createItem(submitData);
       }

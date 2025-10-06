@@ -2,22 +2,36 @@
 import React from "react";
 import { Plus, Package } from "lucide-react";
 import { Button } from "../Shared/Button";
+import { useCart } from "../../hooks/useCart";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
-  price: string | number;
+  price: number;
   image: string;
   stock: number;
   category: string;
 }
 
-interface ProductCardProps {
+export interface ProductCardProps {
   product: Product;
   onAddToCart: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      productId: product.id,
+      name: product.name,
+      price: Number(product.price),
+      quantity: 1,
+      stock: product.stock,
+    });
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
       <div className="aspect-square bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -52,7 +66,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         </div>
 
         <Button
-          onClick={onAddToCart}
+          onClick={handleAddToCart}
           disabled={product.stock === 0}
           className="w-full"
           size="sm"

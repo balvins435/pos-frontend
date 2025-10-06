@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Search, Filter } from "lucide-react";
 import { Button } from "../components/Shared/Button";
-import ProductCard from "../components/Sales/ProductionCard";
+import ProductCard from "../components/Sales/ProductCard";
 import Cart from "../components/Sales/Cart";
 import CheckoutPanel from "../components/Sales/CheckoutPanel";
 import { useCart } from "../hooks/useCart";
@@ -131,20 +131,21 @@ const Sales: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (
               <ProductCard
-                key={product.id}
-                product={{
-                  id: Number(product.id),
-                  name: product.name,
-                  price: product.price,
-                  image: "/api/placeholder/200/200",
-                  stock: product.quantity,
-                  category:
-                    typeof product.category === "string"
-                      ? product.category
-                      : String(product.category),
-                }}
-                onAddToCart={() => handleAddToCart(product)}
-              />
+  key={product.id}
+  product={{
+    id: Number(product.id),
+    name: product.name,
+    price: Number(product.price),
+    image: "/api/placeholder/200/200",
+    stock: product.quantity,
+    category:
+      typeof product.category === "string"
+        ? product.category
+        : String(product.category),
+  }}
+  onAddToCart={() => handleAddToCart(product)}
+/>
+
             ))}
           </div>
 
